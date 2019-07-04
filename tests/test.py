@@ -1,7 +1,7 @@
 import sys 
 import numpy as np
 sys.path.append('..')
-from pgs import GridSearcher
+from pgsearch import GridSearcher
 
 
 if __name__ == "__main__":

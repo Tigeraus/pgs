@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='pgs',
+    name='pgsearch',
     version='0.0.1.dev1',
     description='Parallel grid search.',
     url='https://github.com/Tigeraus/pgs',
@@ -17,6 +17,6 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     keywords='grid search optimization model selection',
-    packages=['pgs'],
+    packages=['pgsearch'],
     install_requires=['ipython>=7.0']
 )
