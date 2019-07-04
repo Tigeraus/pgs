@@ -18,4 +18,5 @@ setup(
     ],
     keywords='grid search optimization model selection',
     packages=['pgs'],
+    install_requires=['ipython>=7.0']
 )

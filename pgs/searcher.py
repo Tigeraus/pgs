@@ -4,6 +4,7 @@ import itertools
 import time
 import sys
 import copy
+from IPython.display import clear_output
 
 
 class GridSearcher:
@@ -29,6 +30,11 @@ class GridSearcher:
             interval: minimal interval for progress bar update, increase it to decrease
             the network load when using it in remote jupyterlab server.
         """
+
+        import __main__ as main
+        self.in_interactive = not hasattr(main, '__file__')
+
+
         self.verbose = verbose
         self.interval = interval
         self.md = Model
@@ -61,7 +67,7 @@ class GridSearcher:
         return_dict = manager.dict()
         e = manager.Event()
         p = multiprocessing.Process(
-            target=self._monitor_progress, args=(self.conf_list, e, return_dict, self.verbose, self.interval))
+            target=self._monitor_progress, args=(self.conf_list, e, return_dict, self.verbose, self.in_interactive, self.interval))
         p.start()
 
         for i in range(len(self.conf_list)):
@@ -94,28 +100,42 @@ class GridSearcher:
         # print(f'#{procnum} finished')
 
     @staticmethod
-    def _monitor_progress(conf_list, event, return_dict, verbose, interval=0.1):
+    def _monitor_progress(conf_list, event, return_dict, verbose, in_interactive, interval=0.1):
         """
         Show progress bar during grid search process.
         """
-        toolbar_width = 60
+        toolbar_width = 40
         bar_symbol = '-'
         total_p = len(conf_list)
         current_p = len(return_dict)
 
         if verbose:
-            sys.stdout.write("|%s|" % (" " * toolbar_width))
-            sys.stdout.flush()
-            sys.stdout.write("\b" * (toolbar_width+1))
-
             while current_p < total_p:
-                num = int(toolbar_width * current_p/total_p)
-                sys.stdout.write(bar_symbol * num+'>')
-                sys.stdout.flush()
-                sys.stdout.write("\b" * (num+1))
+                _update_progress(current_p / total_p, is_ipy=in_interactive)
                 time.sleep(interval)
                 current_p = len(return_dict)
-            sys.stdout.write(bar_symbol * toolbar_width)
-            sys.stdout.write("|\n")
+            _update_progress(1, is_ipy=in_interactive)
+            print('\n')            
+
+
+def _update_progress(progress, is_ipy=False):
+    bar_length = 40
+    if isinstance(progress, int):
+        progress = float(progress)
+    if not isinstance(progress, float):
+        progress = 0
+    if progress < 0:
+        progress = 0
+    if progress >= 1:
+        progress = 1
+
+    block = int(round(bar_length * progress))
+    if is_ipy:
+        clear_output(wait = True)
+        text = "Progress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
+        print(text)
+    else:
+        text = "\rProgress: [{0}] {1:.1f}%".format( "#" * block + "-" * (bar_length - block), progress * 100)
+        print(text, end='')
 
 
