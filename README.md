@@ -3,7 +3,7 @@ Parallel grid search.
 
 Usage:
 
-To use pgs, you need to wrap your model in a specific class (with whatever name you like) with a `run` method which receives only one argument, i.e., the process id. Keep everything you need in the initialization of the model and pass all arguments through a dict.
+To use [pgsearch](https://pypi.org/project/pgsearch/), you need to wrap your model in a specific class (with whatever name you like) with a `run` method which receives only one argument, i.e., the process id. Keep everything you need in the initialization of the model and pass all arguments through a dict.
 
 ~~~python
 from pgsearch import GridSearcher
