@@ -13,15 +13,18 @@ class GridSearcher:
     This class must be used in the top level context or it would lose effect.
     """
 
-    def __init__(self, Model, parameter_dict, processes=None, verbose=True, interval=0.1):
+    def __init__(self, Model, parameters, processes=None, verbose=True, interval=0.1, preprocess=True):
         """
         Specify the model type, generate all possible combinations of
         every pair of parameters and control the processes used.
         args:
             Model: the class that is used to test.
 
-            parameter_dict: a dict containing lists of parameters. If the model receives
-            {'a':0, 'b':1}, parameter_dict can be {'a':[0,1], 'b':[1,2]}
+            parameters: a dict containing lists of parameters or a list of dict of parameters. 
+            dict case: If the model receives {'a':0, 'b':1}, parameters can be {'a':[0,1], 'b':[1,2]}
+            list case: If the model receives {'a':0, 'b':1}, parameters can be
+            [{'a':0, 'b':1}, {'a':1, 'b':2}]
+    
 
             processes: processes used in experiment.
             
@@ -29,6 +32,8 @@ class GridSearcher:
 
             interval: minimal interval for progress bar update, increase it to decrease
             the network load when using it in remote jupyterlab server.
+            preprocess: the parameters is a dict of key-value(lists) if true.
+            Or the parameters is a list ofdicts(key-value) of parameters if false.
         """
 
         import __main__ as main
@@ -42,15 +47,19 @@ class GridSearcher:
             processes = multiprocessing.cpu_count() - 1
         self.pool = multiprocessing.Pool(processes=processes)
         self.conf_list = []
-        kys = parameter_dict.keys()
-        parameters = [parameter_dict[k] for k in kys]
+        if preprocess: # parameters
+            kys = parameters.keys()
+            parameter_combs = [parameters[k] for k in kys]
 
-        for element in itertools.product(*parameters):
-            e = {}
-            for k, v in zip(kys, element):
-                e[k] = v
+            for element in itertools.product(*parameter_combs):
+                e = {}
+                for k, v in zip(kys, element):
+                    e[k] = v
 
-            self.conf_list.append(copy.deepcopy(e))
+                self.conf_list.append(copy.deepcopy(e))
+        else:
+            self.conf_list = copy.deepcopy(parameters)
+
 
     def search(self, save=False, file_name=None):
         """

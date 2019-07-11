@@ -24,3 +24,7 @@ if __name__ == "__main__":
     gs = GridSearcher(Model2, parameter_dict, processes=13, verbose=True, interval=0.1)
     res = gs.search(save=False)
     print(res[0])
+    parameters = [{'pa': [i],'pb': [i+1],'pd': [i*2],'pe':[np.array([1,2,3])]}  for i in range(300)]
+    gs = GridSearcher(Model2, parameters, processes=13, verbose=True, interval=0.1, preprocess=False)
+    res = gs.search(save=False)
+    print(res[0])

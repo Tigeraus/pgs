@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pgsearch',
-    version='0.0.1.dev1',
+    version='0.0.2.dev1',
     description='Parallel grid search.',
     url='https://github.com/Tigeraus/pgs',
     author='Huzi Cheng',
