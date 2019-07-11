@@ -87,7 +87,7 @@ class GridSearcher:
         self.pool.join()
         p.join()
 
-        self.return_dict = return_dict
+        self.return_dict = return_dict.copy()
 
         if save:
             pickle.dump(return_dict, open(file_name, 'wb'))

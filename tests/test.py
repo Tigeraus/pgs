@@ -1,4 +1,5 @@
 import sys 
+import pickle
 import numpy as np
 sys.path.append('..')
 from pgsearch import GridSearcher
@@ -26,5 +27,8 @@ if __name__ == "__main__":
     print(res[0])
     parameters = [{'pa': [i],'pb': [i+1],'pd': [i*2],'pe':[np.array([1,2,3])]}  for i in range(300)]
     gs = GridSearcher(Model2, parameters, processes=13, verbose=True, interval=0.1, preprocess=False)
-    res = gs.search(save=False)
+    res = gs.search(save=True, file_name='tmp.pkl')
+
+    tmp = pickle.load(open("tmp.pkl",'rb'))
     print(res[0])
+    print(tmp[0])
